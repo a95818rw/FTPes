@@ -1,0 +1,34 @@
+package ftps;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.SocketException;
+
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPSClient;
+
+public class test3 {
+	
+	public static void getPath(FTPClient ftp,String path,ArrayList<String> pathArray) throws IOException{
+		FTPFile[] files = ftp.listFiles();
+		for (FTPFile ftpFile : files) {
+		if(ftpFile.getName().equals(".")||ftpFile.getName().equals(".."))continue;
+		if(ftpFile.isDirectory()){//如果是目錄，則遞迴呼叫，查詢裡面所有檔案
+			path ="/" + ftpFile.getName();
+			pathArray.add(path);
+			ftp.changeWorkingDirectory(path);//改變當前路徑
+			getPath(ftp,path,pathArray);//遞迴呼叫
+			path=path.substring(0, path.lastIndexOf("/"));//避免對之後的同目錄下的路徑構造作出干擾，
+			}
+		}
+	}
+	
+	
+	
+
+}

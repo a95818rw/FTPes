@@ -1,0 +1,82 @@
+package ftps;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.SocketException;
+import java.util.ArrayList;
+
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.FTPSClient;
+
+public class test3 {
+	
+	public static void getPath(FTPClient ftp,String path,ArrayList<String> pathArray) throws IOException{
+		FTPFile[] files = ftp.listFiles();
+		for (FTPFile ftpFile : files) {
+		if(ftpFile.getName().equals(".")||ftpFile.getName().equals(".."))continue;
+		if(ftpFile.isDirectory()){//如果是目錄，則遞迴呼叫，查詢裡面所有檔案
+			path ="/" + ftpFile.getName();
+			pathArray.add(path);
+			ftp.changeWorkingDirectory(path);//改變當前路徑
+			getPath(ftp,path,pathArray);//遞迴呼叫
+			path=path.substring(0, path.lastIndexOf("/"));//避免對之後的同目錄下的路徑構造作出干擾，
+			}
+		}
+	}
+	
+	public static void download(FTPClient ftp,ArrayList<String> pathArray,String localRootPath) throws IOException{
+		for (String string : pathArray) {
+			String localPath=localRootPath + string;
+			File localFile = new File(localPath);
+			if (!localFile.exists()) { 
+				localFile.mkdirs(); 
+			}
+		}
+		for (String string : pathArray) {
+			String localPath=localRootPath + string;//構造本地路徑
+			ftp.changeWorkingDirectory(string);
+			FTPFile[] file=ftp.listFiles();
+			for (FTPFile ftpFile : file) {
+				if(ftpFile.getName().equals(".")||ftpFile.getName().equals(".."))continue;
+					File localFile = new File(localPath);
+				if(!ftpFile.isDirectory()){
+					OutputStream is = new FileOutputStream(localFile + "/" + ftpFile.getName());
+					ftp.retrieveFile(ftpFile.getName(), is);
+					is.close();
+				}
+			}
+		}
+	}
+	
+	public static void main(String[] args) throws SocketException, IOException {
+		FTPClient ftp = new FTPClient();
+		ftp.connect("10.253.46.177");
+		ftp.login("client1","c1234567890");
+		int reply;
+		reply = ftp.getReplyCode();
+		
+		if(!FTPReply.isPositiveCompletion(reply)) {
+			ftp.disconnect();
+			System.err.println("FTP server refused connection.");
+			System.exit(1);
+		}
+		ftp.setBufferSize(1024);
+		ftp.setFileType(FTP.BINARY_FILE_TYPE); 
+		ftp.enterLocalPassiveMode();
+		String path="";
+		ArrayList<String> pathArray=new ArrayList<String>();
+		getPath(ftp,path,pathArray);
+		System.out.println(pathArray);
+		download(ftp, pathArray, "c:\\download");
+		ftp.logout();
+		ftp.disconnect();
+	}
+	
+
+}

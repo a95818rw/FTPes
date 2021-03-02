@@ -22,5 +22,6 @@
 	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-net-3.8.0/commons-net-3.8.0.jar"/>
 	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-net-3.8.0/commons-net-3.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-net-3.8.0/commons-net-examples-3.8.0.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/chilkat-9.5.0-jdk11-x64/chilkat.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

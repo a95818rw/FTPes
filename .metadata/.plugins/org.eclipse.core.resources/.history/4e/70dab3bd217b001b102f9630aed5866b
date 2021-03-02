@@ -1,0 +1,57 @@
+package ftps;
+
+import com.chilkatsoft.*;
+
+public class test4 {
+
+  static {
+    try {
+        System.loadLibrary("chilkat");
+    } catch (UnsatisfiedLinkError e) {
+      System.err.println("Native code library failed to load.\n" + e);
+      System.exit(1);
+    }
+  }
+
+  public static void main(String argv[])
+  {
+    // This example requires the Chilkat API to have been previously unlocked.
+    // See Global Unlock Sample for sample code.
+
+    CkFtp2 ftp = new CkFtp2();
+
+    // If this example does not work, try using passive mode
+    // by setting this to true.
+    ftp.put_Passive(false);
+    ftp.put_Hostname("ftp.something.com");
+    ftp.put_Username("test");
+    ftp.put_Password("test");
+    ftp.put_Port(990);
+
+    // We don't want AUTH SSL:
+    ftp.put_AuthTls(false);
+
+    // We want Implicit SSL:
+    ftp.put_Ssl(true);
+
+    // Connect and login to the FTP server.
+    boolean success = ftp.Connect();
+    if (success != true) {
+        System.out.println(ftp.lastErrorText());
+        return;
+        }
+    else {
+        // LastErrorText contains information even when
+        // successful. This allows you to visually verify
+        // that the secure connection actually occurred.
+        System.out.println(ftp.lastErrorText());
+        }
+
+    System.out.println("FTPS Channel Established!");
+
+    // Do whatever you're doing to do ...
+    // upload files, download files, etc...
+
+    success = ftp.Disconnect();
+  }
+}

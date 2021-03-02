@@ -1,0 +1,45 @@
+package ftps;
+
+public static void download(String filename, String base)
+{
+    File basedir = new File(base);
+    basedir.mkdirs();
+
+    try
+    {
+        FTPFile[] ftpFiles = ftpClient.listFiles();
+        for (FTPFile file : ftpFiles)
+        {
+            if (!file.getName().equals(".") && !file.getName().equals("..")) {
+                // If Dealing with a directory, change to it and call the function again
+                if (file.isDirectory())
+                {
+                    // Change working Directory to this directory.
+                    ftpClient.changeWorkingDirectory(file.getName());
+                    // Recursive call to this method.
+                    download(ftpClient.printWorkingDirectory(), base);
+
+                    // Create the directory locally - in the right place
+                    File newDir = new File (base + "/" + ftpClient.printWorkingDirectory());
+                    newDir.mkdirs();
+
+                    // Come back out to the parent level.
+                    ftpClient.changeToParentDirectory();
+                }
+                else
+                {
+                    ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+                    String remoteFile1 = ftpClient.printWorkingDirectory() + "/" + file.getName();
+                    File downloadFile1 = new File(base + "/" + ftpClient.printWorkingDirectory() + "/" + file.getName());
+                    OutputStream outputStream1 = new BufferedOutputStream(new FileOutputStream(downloadFile1));
+                    boolean success = ftpClient.retrieveFile(remoteFile1, outputStream1);
+                    outputStream1.close();
+                }
+            }
+        }
+    }
+    catch(IOException ex)
+    {
+        System.out.println(ex);
+    }
+}

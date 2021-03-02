@@ -1,0 +1,63 @@
+package ftps;
+
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.SocketException;
+
+import org.apache.commons.net.ftp.FTPSClient;
+
+public class main {
+	
+	private static void downloadFolder(String fileName, String downloadtarget, String downloadpath, FTPSClient ftpClient) {
+		
+		BufferedOutputStream outStream = null;
+		try {
+			ftpClient.changeWorkingDirectory(downloadtarget);
+			FileOutputStream f = new FileOutputStream(downloadpath);
+			outStream = new BufferedOutputStream(new FileOutputStream(downloadpath));
+			ftpClient.retrieveFile(fileName, outStream);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{
+			if (null != outStream) {
+				try {
+				outStream.flush();
+				outStream.close();
+				}catch (IOException e) {
+				e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		String downloadtarget = "/";
+		String downloadpath = "D:/temp";
+		String fileName = "test";
+		
+		
+		FTPSClient ftpClient = new FTPSClient();
+		try {
+			ftpClient.connect("10.253.46.177");
+			ftpClient.login("client1", "c1234567890");
+			System.out.print("connect");
+		
+			downloadFolder(fileName, downloadtarget, downloadpath, ftpClient);
+			
+		
+			ftpClient.logout();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+}
