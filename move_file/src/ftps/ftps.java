@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import org.apache.commons.cli.CommandLine;
@@ -54,6 +57,18 @@ public class ftps {
 			pw = cmd.getOptionValue("pw");
 			target = cmd.getOptionValue("target");
 			downloadpath = cmd.getOptionValue("downloadpath");
+			
+			Path p = Paths.get(downloadpath);	//路徑設定
+			 
+			  /*確認資料夾是否存在*/
+			  if (Files.exists(p)) {
+				  System.out.print("資料夾已存在");
+			  }
+			  else {
+				  /*不存在的話,直接建立資料夾*/
+				  Files.createDirectory(p);
+				  System.out.print("已成功建立資料夾");
+			}
 			
 			ftpsClient.connect(ip, port);
 			ftpsClient.execPBSZ(0);
