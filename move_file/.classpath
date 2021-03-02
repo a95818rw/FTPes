@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-cli-1.4/commons-cli-1.4.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-cli-1.4/commons-cli-1.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-cli-1.4/commons-cli-1.4-sources.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-cli-1.4/commons-cli-1.4-tests.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-cli-1.4/commons-cli-1.4-test-sources.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-io-2.8.0/commons-io-2.8.0.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-io-2.8.0/commons-io-2.8.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-io-2.8.0/commons-io-2.8.0-sources.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-io-2.8.0/commons-io-2.8.0-tests.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-io-2.8.0/commons-io-2.8.0-test-sources.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-lang-2.6/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-lang-2.6/commons-lang-2.6-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/landbank/move_file/lib/commons-lang-2.6/commons-lang-2.6-sources.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

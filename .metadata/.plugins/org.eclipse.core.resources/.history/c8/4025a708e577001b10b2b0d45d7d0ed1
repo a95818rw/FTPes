@@ -1,0 +1,35 @@
+package move_file;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class make_dir {
+	
+	  static void make_dir(String dir) throws IOException, InterruptedException {
+		  
+          Date date = new Date();
+          SimpleDateFormat bartDateFormat = new SimpleDateFormat("yyyy-MM-dd");       
+          String str = bartDateFormat.format(date);       
+          
+          dir = dir + "/" + str;
+          System.out.println(dir);
+          Path p = Paths.get(dir);	//路徑設定
+          
+          /*確認資料夾是否存在*/
+          if (Files.exists(p)) {
+              System.out.print("資料夾已存在");
+          }
+          else {
+              /*不存在的話,直接建立資料夾*/
+              Files.createDirectory(p);
+              System.out.print("已成功建立資料夾");
+          }
+      
+
+	  }
+	
+}
