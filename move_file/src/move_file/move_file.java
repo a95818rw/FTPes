@@ -1,0 +1,41 @@
+package move_file;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
+public class move_file {
+
+	public static void main(String[] args) throws IOException, InterruptedException, ParseException {
+		// TODO Auto-generated method stub
+		Date date = new Date();
+		SimpleDateFormat bartDateFormat = new SimpleDateFormat("yyyy-MM-dd");       
+		String str_date = bartDateFormat.format(date);
+
+		Options options = new Options();
+
+		options.addOption("p", true,"path");//引數可用
+
+		CommandLineParser parser = new DefaultParser();
+		CommandLine cmd = parser.parse( options, args);
+
+		if (cmd.hasOption("p")){
+	            String path =cmd.getOptionValue("p");
+	    		make_dir mk = new make_dir();
+	    		mk.make_dir(path, str_date);
+	    		
+	    		read_dir r = new read_dir();
+				String path2 = "D:/temp" + "/" + str_date;
+				r.read(path, path2);
+				r.move(path, path2,str_date);
+	    		
+		}
+		
+	}
+}
