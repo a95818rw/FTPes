@@ -1,0 +1,99 @@
+package ftps;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPSClient;
+ 
+/**
+ * A program demonstrates how to upload files from local computer to a remote
+ * FTP server using Apache Commons Net API.
+ * @author www.codejava.net
+ */
+public class ftps {
+ 
+	public static void main(String[] args) {
+		String ip;
+		int port;
+		String user;
+		String pw;
+		String target;
+		String downloadpath;
+		
+		Options options = new Options();
+
+		options.addOption("ip", true, "ip");
+		options.addOption("port", true, "port");
+		options.addOption("user", true, "user");
+		options.addOption("pw", true, "pw");
+		options.addOption("target", true, "target");
+		options.addOption("downloadpath", true, "path");
+
+		CommandLineParser parser = new DefaultParser();
+		CommandLine cmd;
+		
+		FTPSClient ftpsClient = new FTPSClient("TLS", true);
+
+		try {
+			cmd = parser.parse( options, args);
+			ip = cmd.getOptionValue("ip");
+			port = Integer.parseInt(cmd.getOptionValue("port"));
+			user = cmd.getOptionValue("user");
+			pw = cmd.getOptionValue("pw");
+			target = cmd.getOptionValue("target");
+			downloadpath = cmd.getOptionValue("downloadpath");
+			
+			ftpsClient.connect(ip, port);
+			ftpsClient.execPBSZ(0);
+			ftpsClient.execPROT("P");
+			ftpsClient.login(user, pw);
+			ftpsClient.setFileType(FTP.BINARY_FILE_TYPE);
+			
+			ftpsClient.changeWorkingDirectory(target);//改變當前路徑
+			
+			FTPFile[] files = ftpsClient.listFiles();
+			String[] files_name = null;
+			boolean x = false;
+			for (FTPFile ftpFile : files) {
+				for(String file_name : files_name) {
+					if(ftpFile.getName().equals(file_name)) x = true;
+				}
+				if(x == true) {
+					File downloadFile = new File(downloadpath + "/" + ftpFile.getName());
+					ftpFile.setName(target + "/" + ftpFile.getName());
+					System.out.println(ftpFile.getName());
+					String remoteFile1 = ftpFile.getName();
+					OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
+					ftpsClient.retrieveFile(remoteFile1, outputStream);
+					outputStream.close();
+					x = false;
+				}
+			}
+			
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				if (ftpsClient.isConnected()) {
+					ftpsClient.logout();
+					ftpsClient.disconnect();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+}

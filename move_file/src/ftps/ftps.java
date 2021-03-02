@@ -5,12 +5,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPSClient;
@@ -62,16 +64,25 @@ public class ftps {
 			ftpsClient.changeWorkingDirectory(target);//改變當前路徑
 			
 			FTPFile[] files = ftpsClient.listFiles();
-			
+			ArrayList<String> files_name = new ArrayList<String>();
+			boolean x = true;
 			for (FTPFile ftpFile : files) {
-				File downloadFile = new File(downloadpath + "/" + ftpFile.getName());
-				ftpFile.setName(target + "/" + ftpFile.getName());
-				System.out.println(ftpFile.getName());
-				String remoteFile1 = ftpFile.getName();
-				
-				OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
-				ftpsClient.retrieveFile(remoteFile1, outputStream);
-				outputStream.close();
+				for(String file_name : files_name) {
+					if(StringUtils.substringBeforeLast(ftpFile.getName(), ".").equals(StringUtils.substringBeforeLast(file_name, "."))) {
+						x = false;
+						break;
+					}
+				}
+				if(x == true) {
+					File downloadFile = new File(downloadpath + "/" + ftpFile.getName());
+					files_name.add(ftpFile.getName());
+					ftpFile.setName(target + "/" + ftpFile.getName());
+					String remoteFile1 = ftpFile.getName();
+					OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
+					ftpsClient.retrieveFile(remoteFile1, outputStream);
+					outputStream.close();
+				}
+				x = true;
 			}
 			
 		} catch (IOException ex) {
