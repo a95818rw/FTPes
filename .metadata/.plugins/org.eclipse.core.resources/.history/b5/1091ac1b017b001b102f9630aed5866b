@@ -1,0 +1,28 @@
+package ftps;
+
+import java.io.IOException;
+import java.net.SocketException;
+
+import org.apache.commons.net.ftp.FTPSClient;
+
+public class main {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		FTPSClient ftpClient = new FTPSClient();
+		try {
+			ftpClient.connect("127.0.0.1");
+			ftpClient.login("client1", "Lb123456789");
+			System.out.print("connect");
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+}
