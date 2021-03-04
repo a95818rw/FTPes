@@ -1,0 +1,28 @@
+package ftps;
+
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class test {
+
+    private static Logger logger = Logger.getLogger(test.class.getName());
+    
+    public static void main(String [] args){
+        FileHandler fileHandler;
+		try {
+			fileHandler = new FileHandler("E:/Logs/test.log");
+		    fileHandler.setLevel(Level.INFO); //Log的層級
+		    logger.addHandler(fileHandler);
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    logger.info("寫入的log內容");
+    }
+
+}

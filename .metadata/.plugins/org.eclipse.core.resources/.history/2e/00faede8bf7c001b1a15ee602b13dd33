@@ -1,0 +1,19 @@
+package ftps;
+
+public class test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		String target = "";
+		
+		if(
+				!target.contains("\\") && !target.contains("|") && !target.contains("/")
+				&& !target.contains("<")&& !target.contains(":")&& !target.contains(">")
+				&& !target.contains("*")&& !target.contains("?")&& !target.contains("\"")
+			) System.out.print("The target is illegal.");
+		System.out.print(target);
+
+	}
+
+}
