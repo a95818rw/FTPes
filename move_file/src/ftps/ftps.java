@@ -78,15 +78,8 @@ public class ftps {
 			
 			FTPFile[] files = ftpsClient.listFiles();
 			ArrayList<String> files_name = new ArrayList<String>();
-			boolean x = true;
 			for (FTPFile ftpFile : files) {
-				for(String file_name : files_name) {
-					if(StringUtils.substringBeforeLast(ftpFile.getName(), ".").equals(StringUtils.substringBeforeLast(file_name, "."))) {
-						x = false;
-						break;
-					}
-				}
-				if(x == true) {
+				if(ftpFile.getName().contains(".")) {
 					File downloadFile = new File(downloadpath + "/" + ftpFile.getName());
 					files_name.add(ftpFile.getName());
 					ftpFile.setName(target + "/" + ftpFile.getName());
@@ -95,7 +88,7 @@ public class ftps {
 					ftpsClient.retrieveFile(remoteFile1, outputStream);
 					outputStream.close();
 				}
-				x = true;
+
 			}
 			
 		} catch (IOException ex) {
