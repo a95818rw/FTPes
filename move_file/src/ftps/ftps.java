@@ -21,6 +21,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPSClient;
@@ -47,6 +48,8 @@ public class ftps {
 		String pw;
 		String target;
 		String downloadpath;
+		String filenameExtension;
+		String[] extensions = null;
 		boolean folderIsNull = true;
 		
 		Options options = new Options();
@@ -56,6 +59,7 @@ public class ftps {
 		options.addOption("pw", true, "pw");
 		options.addOption("target", true, "target");
 		options.addOption("downloadpath", true, "path");
+		options.addOption("filenameExtension", true, "filenameExtension");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd;
@@ -77,6 +81,8 @@ public class ftps {
 				pw = cmd.getOptionValue("pw");
 				target = cmd.getOptionValue("target");
 				downloadpath = cmd.getOptionValue("downloadpath");
+				filenameExtension = cmd.getOptionValue("filenameExtension");
+				extensions = filenameExtension.split(";");
 				
 				if(
 					target.contains("\\") || target.contains("|") || target.contains("\"") ||
@@ -110,16 +116,18 @@ public class ftps {
 						logger.info("Start to download file.");
 						
 						for (FTPFile ftpFile : files) {
-							if(ftpFile.getName().contains(".")) {
-								logger.info("downloading file : " + ftpFile.getName());
-								File downloadFile = new File(downloadpath + "/" + ftpFile.getName());
-								files_name.add(ftpFile.getName());
-								ftpFile.setName(target + "/" + ftpFile.getName());
-								String remoteFile1 = ftpFile.getName();
-								OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
-								ftpsClient.retrieveFile(remoteFile1, outputStream);
-								outputStream.close();
-								folderIsNull = false;
+							for(String extension : extensions) {
+								if(ftpFile.isFile() && StringUtils.substringAfterLast(ftpFile.getName(), ".").equals(extension)) {
+									logger.info("downloading file : " + ftpFile.getName());
+									File downloadFile = new File(downloadpath + "/" + ftpFile.getName());
+									files_name.add(ftpFile.getName());
+									ftpFile.setName(target + "/" + ftpFile.getName());
+									String remoteFile1 = ftpFile.getName();
+									OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
+									ftpsClient.retrieveFile(remoteFile1, outputStream);
+									outputStream.close();
+									folderIsNull = false;
+								}
 							}
 						}
 						

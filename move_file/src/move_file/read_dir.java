@@ -2,6 +2,7 @@ package move_file;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,8 +16,13 @@ public class read_dir {
 		return str;
 	}
 	
-	private String getVersion(String str) {
-		return StringUtils.substringAfterLast(StringUtils.substringBeforeLast(str, "."), "-");
+	private int getVersion(String str) {
+		Scanner sc = new Scanner(str.trim());
+		if(sc.hasNextInt()) {
+			return Integer.parseInt(StringUtils.substringAfterLast(StringUtils.substringBeforeLast(str, "."), "-"));
+		}else {
+			return 0;
+		}
 	}
 	
 	private void copy(String path, String path2, String name, String target) throws IOException {
@@ -38,7 +44,7 @@ public class read_dir {
 		
 	}
 	
-	public void move(String path, String path2, String date) throws IOException {
+	public void move(String path, String path2, String date) throws Exception {
 		int i = 0, j = 0, k = 1;
 		String name;
 		while(i < list1.length) {
@@ -46,7 +52,7 @@ public class read_dir {
 				
 				while(j < list2.length) {
 					if(cut(list2[j]).equals(StringUtils.substringBeforeLast(list1[i], "."))) {
-						if (k <= Integer.parseInt(getVersion(list2[j]))) k = Integer.parseInt(getVersion(list2[j])) + 1;
+						if (k <= getVersion(list2[j])) k = getVersion(list2[j]) + 1;
 						
 					}
 					j++;

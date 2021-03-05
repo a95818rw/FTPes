@@ -1,0 +1,19 @@
+package ftps;
+
+import org.apache.commons.lang.StringUtils;
+
+public class test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		String target = "1;2;3.4;4;5;";
+		String[] array = target.split(";"); 
+		
+		for(String i : array) {
+			System.out.println(StringUtils.substringAfterLast(i, "."));
+		}
+		
+	}
+
+}
