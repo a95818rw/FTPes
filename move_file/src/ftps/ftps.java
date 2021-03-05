@@ -47,9 +47,12 @@ public class ftps {
 		String pw;
 		String target;
 		String downloadpath;
+		String logpath;
 		String filenameExtension;
 		String[] extensions = null;
 		boolean folderIsNull = true;
+		
+		Path p;
 		
 		Options options = new Options();
 		options.addOption("ip", true, "ip");
@@ -59,29 +62,39 @@ public class ftps {
 		options.addOption("target", true, "target");
 		options.addOption("downloadpath", true, "path");
 		options.addOption("filenameExtension", true, "filenameExtension");
+		options.addOption("logpath", true, "logpath");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd;
 		
-		FTPSClient ftpsClient = new FTPSClient("TLS", true);
+		FTPSClient ftpsClient = new FTPSClient("TLS", false);
 		ftpsClient.setControlEncoding("UTF-8");
 
 		try {
-			fileHandler = new FileHandler("D:/temp/SystemOut_" + str_date + ".log");
+
+			cmd = parser.parse( options, args);
+			ip = cmd.getOptionValue("ip");
+			port = Integer.parseInt(cmd.getOptionValue("port"));
+			user = cmd.getOptionValue("user");
+			pw = cmd.getOptionValue("pw");
+			target = cmd.getOptionValue("target");
+			downloadpath = cmd.getOptionValue("downloadpath");
+			filenameExtension = cmd.getOptionValue("filenameExtension");
+			logpath = cmd.getOptionValue("logpath");
+			
+			p = Paths.get(logpath);
+			if (Files.exists(p)) {
+			} else {
+				Files.createDirectory(p);
+			}
+			fileHandler = new FileHandler(logpath + "/SystemOut_" + str_date + ".log");
 			fileHandler.setLevel(Level.INFO);
 			logger.addHandler(fileHandler);
 			SimpleFormatter formatter = new SimpleFormatter();  
 			fileHandler.setFormatter(formatter);
-
+			
 			try {
-				cmd = parser.parse( options, args);
-				ip = cmd.getOptionValue("ip");
-				port = Integer.parseInt(cmd.getOptionValue("port"));
-				user = cmd.getOptionValue("user");
-				pw = cmd.getOptionValue("pw");
-				target = cmd.getOptionValue("target");
-				downloadpath = cmd.getOptionValue("downloadpath");
-				filenameExtension = cmd.getOptionValue("filenameExtension");
+				
 				extensions = filenameExtension.split(";");
 				
 				if(
@@ -90,7 +103,7 @@ public class ftps {
 					target.contains("*") || target.contains("?")
 				) logger.severe("The target is illegal.");
 				
-				Path p = Paths.get(downloadpath);
+				p = Paths.get(downloadpath);
 				if (Files.exists(p)) {
 				} else {
 					Files.createDirectory(p);
@@ -102,7 +115,7 @@ public class ftps {
 				
 				ftpsClient.login(user, pw);
 				if(ftpsClient.getReplyCode() == 530) {
-					logger.severe("Login or password incorrect!");
+					logger.severe("User cannot log in!");
 				} else {
 					ftpsClient.setFileType(FTP.BINARY_FILE_TYPE);
 					
@@ -140,7 +153,6 @@ public class ftps {
 					
 				}
 
-				
 			} catch (Exception e) {
 				logger.severe(e.toString());
 			} finally {
@@ -155,7 +167,7 @@ public class ftps {
 			}
 			
 		} catch (Exception e) {
-			logger.severe(e.toString());
+			e.printStackTrace();
 		}
 	}
 }
