@@ -64,7 +64,7 @@ public class ftps {
 		CommandLine cmd;
 		
 		FTPSClient ftpsClient = new FTPSClient("TLS", true);
-		ftpsClient.setControlEncoding("UTF-8");
+		ftpsClient.setAutodetectUTF8( true );
 
 		try {
 			fileHandler = new FileHandler("D:/temp/SystemOut_" + str_date + ".log");
