@@ -1,0 +1,19 @@
+package ftps;
+
+import java.io.File;
+import java.util.Scanner;
+
+import org.apache.commons.io.FileUtils;
+
+public class test {
+
+    public static void main(String[] args) {
+        
+    	String filepath;
+    	String downloadpath;
+		File ftarget = new File(filepath);
+		File file = new File(downloadpath + "/temp.temp");
+		FileUtils.copyFile(file, ftarget);
+    }
+
+}

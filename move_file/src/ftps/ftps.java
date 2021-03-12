@@ -20,6 +20,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPFile;
@@ -46,11 +47,14 @@ public class ftps {
 		String user;
 		String pw;
 		String target;
+		String filepath = null;
 		String downloadpath;
 		String logpath;
 		String filenameExtension;
 		String[] extensions = null;
 		boolean folderIsNull = true;
+		boolean fileistarget = true;
+		boolean fileislocked = false;
 		
 		Path p;
 		
@@ -67,7 +71,7 @@ public class ftps {
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd;
 		
-		FTPSClient ftpsClient = new FTPSClient("TLS", false);
+		FTPSClient ftpsClient = new FTPSClient("TLS", true);
 		ftpsClient.setControlEncoding("UTF-8");
 
 		try {
@@ -129,30 +133,59 @@ public class ftps {
 						logger.info("Start to download file.");
 						
 						for (FTPFile ftpFile : files) {
-							for(String extension : extensions) {
-								if(ftpFile.isFile() && StringUtils.substringAfterLast(ftpFile.getName(), ".").equals(extension)) {
-									logger.info("downloading file : " + ftpFile.getName());
-									File downloadFile = new File(downloadpath + "/" + ftpFile.getName());
-									files_name.add(ftpFile.getName());
-									ftpFile.setName(target + "/" + ftpFile.getName());
-									String remoteFile1 = ftpFile.getName();
-									OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
-									ftpsClient.retrieveFile(remoteFile1, outputStream);
-									outputStream.close();
-									folderIsNull = false;
+							fileislocked = false;
+							fileistarget = false;
+							try {
+								for(String extension : extensions) {
+									if(ftpFile.isFile() && StringUtils.substringAfterLast(ftpFile.getName(), ".").equals(extension)) {
+										fileistarget = true;
+										folderIsNull = false;
+										filepath = downloadpath + "/" + ftpFile.getName();
+										logger.info("downloading file : " + ftpFile.getName());
+										files_name.add(ftpFile.getName());
+										String remoteFile1 = target + "/" + ftpFile.getName();
+										File downloadFile = new File(downloadpath + "/temp.temp");
+										OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
+										ftpsClient.retrieveFile(remoteFile1, outputStream);
+										outputStream.close();
+									
+									}
 								}
+							} catch(Exception e) {
+
+								try {
+									fileislocked = true;
+									logger.severe("File is locked.");
+									ftpsClient.logout();
+									ftpsClient.disconnect();
+									ftpsClient.connect(ip, port);
+									ftpsClient.execPBSZ(0);
+									ftpsClient.execPROT("P");
+									ftpsClient.login(user, pw);
+									ftpsClient.setFileType(FTP.BINARY_FILE_TYPE);
+									ftpsClient.changeWorkingDirectory(target);
+								} catch(Exception e2) {
+									logger.severe(e2.toString());
+								}
+
+							} finally {
+								if(fileislocked == false && fileistarget == true) {
+									logger.info(filepath);
+									File ftarget = new File(filepath);
+									File file = new File(downloadpath + "/temp.temp");
+									FileUtils.copyFile(file, ftarget);
+									FileUtils.deleteQuietly(file);
+								}
+								
 							}
 						}
 						
 						if(folderIsNull == true) {
-							logger.warning("The folder is null.");
+							logger.warning("The folder is null or the filename extension is error");
 						}
-						
 						logger.info("Finish~");
 					}
-					
 				}
-
 			} catch (Exception e) {
 				logger.severe(e.toString());
 			} finally {

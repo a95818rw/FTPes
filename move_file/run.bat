@@ -1,1 +1,0 @@
-java -jar "D:\landbank\move_file\t.jar" -p D:/temp
